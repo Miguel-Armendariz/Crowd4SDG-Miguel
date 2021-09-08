@@ -11,68 +11,57 @@
         <img src="/static/images/VisualCit.png" style="height: 60px;">   
         Pipeline Interface 
     </h1>
-    <div class= "source">
+    <div class= "source"> 
         <form method="POST">
             <select id="source" name="source">
-                <option value="Twitter"{% if source_applied[0].source == "Twitter" %}selected{%endif%}>Twitter</option>
+                <option value="Twitter"{% if source_applied.source == "Twitter" %}selected{%endif%}>Twitter</option>
                <!-- 
-                <option value="Flickr"{% if source_applied[0].source == "Flickr" %}selected{%endif%}>Flickr</option>
-                <option value="Reddit"{% if source_applied[0].source == "Reddit" %}selected{%endif%}>Reddit</option> -->
+                <option value="Flickr"{% if source_applied.source == "Flickr" %}selected{%endif%}>Flickr</option>
+                <option value="Reddit"{% if source_applied.source == "Reddit" %}selected{%endif%}>Reddit</option> -->
             </select>
-            <input id="keywords" name="keywords" type="text" {% if count > 0 %} value= '{{source_applied[0].keywords}}' {% endif %} placeholder= "Search keywords" required>
+            <input id="keywords" name="keywords" type="text" {% if count > 0 %} value= '{{source_applied.keywords}}' {% endif %} 
+                    placeholder= "Search keywords" required>
             <label for="number_pic" style= "margin-left: 20px; font-family: Arial, Helvetica, sans-serif;">Number of images:</label>
-            <input id="number_pic" name="number_pic" {% if count == 0%} value= 100 {% else %} value= {{number_images}} {% endif %} type="number" min="100" step="100" style="width: 50px;">
-            <button id="source_button" type="submit" class="source_button" name="source_button" value="">Search</button> 
-            <button id="loading" name="loading" class="loading" type="button" style="display: none;"><i class="fa fa-circle-o-notch fa-spin"></i> Loading</button> <br><br>
+            <input id="number_pic" name="number_pic" {% if count == 0%} value= 100 {% else %} value= {{number_images}} {% endif %} 
+                    type="number" min="100" step="100" style="width: 50px;">
+            <button id="source_button" type="submit" class="source_button" name="source_button" value="">Search</button>
+            <button id="loading" name="loading" class="loading" type="button" style="display: none;">
+                    <i class="fa fa-circle-o-notch fa-spin"></i> Loading</button> <br><br>
         </form>
-        {% if tweets[0]|length < number_images|int %}
-            {% set number= tweets[0]|length %}
-        {% else %}
-            {% set number= number_images|int %}
-        {% endif %}
-        {% for s in source_applied %}
-        {% if s.source != "" %}
-        {% if s.source == 'Twitter' %}
+    
+        {% if source_applied.source != "" %}
             <div class="container">
-                {% for u in range(number) %}
+                {% for u in range(tweets[0]|length) %}
                     <img src= {{ tweets[0][u].url}} height=100 title= '{{tweets[0][u].text}}' style="display: inline-block;" loading="lazy"/>
-                    <!--
-                    <div class= "overlay">
-                        <div class= "text"> {{tweets[0][u].text}}</div>
-                    </div>
-                    -->
                 {% endfor %}
             </div><br>
         {% endif %}
-        {% endif %}
+        
         <div class= "download">
             {% if count > 0 %}
             <a href="/downloadCSV?id=0">
                 <button id= "download_csv" type= "button" name= "download_csv" value= "0" style= "float: right;">Download CSV File</button>
             </a>            
             {% endif %}
-        </div><br>      
-        {% endfor %}    
+        </div><br>   
     </div> 
     <div class= "filters">
         {% if count>0 %}
         {% for x in range(count) %}
         <form method="POST">
-            <button type="submit" id={{"up_button"~(x+1)}} class= "btn" name= "up_button" value= {{x+1}} {% if count > x+1 and x > 0 %} style="display:inline;" {% else %} style="display:none;" {% endif %}><i class= "fa fa-arrow-up" style="font-size:12px;"></i></button>
+            <button type="submit" id={{"up_button"~(x+1)}} class= "btn" name= "up_button" value= {{x+1}} 
+            {% if count > x+1 and x > 0 %} style="display:inline;" {% else %} style="display:none;" {% endif %}>
+            <i class= "fa fa-arrow-up" style="font-size:12px;"></i></button>
+            
             <select id={{"Filter"~(x+1)}} name="Filter_select" required>
                 <option value="">-Select-</option>
                 <option value="Remove memes" {% if applied[x].Filter == "Remove memes" %} selected {% endif %}>Remove memes</option>
                 <option value="Scene detector" {% if applied[x].Filter == "Scene detector" %} selected {% endif %}>Scene detector</option>
                 <option value="Contains object" {% if applied[x].Filter == "Contains object" %} selected {% endif %}>Contains object</option>
                 <option value="User location" {% if applied[x].Filter == "User location" %} selected {% endif %}>User location</option>
-                <!--<option value="Geographic" {% if applied[x].Filter == "Geographic" %} selected {% endif %}>Geographic</option>-->
             </select>
-            {% for message in get_flashed_messages() %}
-            {% if applied[x].Filter == "" %}
-            <span style="color: red;">{{ message }}</span>
-            {% endif %}
-            {% endfor %}
-            <select id={{"option1"~(x+1)}} name="option1_select" {% if applied[x].Filter == "Scene detector" %} style="display:inline;" {% else %} style="display:none;" {% endif %}>
+            <select id={{"option1"~(x+1)}} name="option1_select" {% if applied[x].Filter == "Scene detector" %} 
+                    style="display:inline;" {% else %} style="display:none;" {% endif %}>
                 <option value="PublicPrivateClassifier" {% if applied[x].Attribute == "PublicPrivateClassifier" %} selected {% endif %}>Outdoors</option>
                 <!--
                 <option value="Indoors" {% if applied[x].Attribute == "Indoors" %} selected {% endif %}>Indoors</option>
@@ -81,7 +70,8 @@
                 <option value="Day" {% if applied[x].Attribute == "Day" %} selected {% endif %}>Day</option>
                 <option value="Night" {% if applied[x].Attribute == "Night" %} selected {% endif %}>Night</option> -->
             </select>
-            <select id={{"option2"~(x+1)}} name="option2_select" {% if applied[x].Filter == "Contains object" %} style="display:inline;" {% else %} style="display:none;" {% endif %}>
+            <select id={{"option2"~(x+1)}} name="option2_select" {% if applied[x].Filter == "Contains object" %} 
+                    style="display:inline;" {% else %} style="display:none;" {% endif %}>
                 <option value="PeopleDetector" {% if applied[x].Attribute == "PeopleDetector" %} selected {% endif %}>Person</option>
                 <!--
                 <option value="Rubble" {% if applied[x].Attribute == "Rubble" %} selected {% endif %}>Rubble</option>
@@ -93,32 +83,31 @@
                 <option value="Ash" {% if applied[x].Attribute == "Ash" %} selected {% endif %}>Ash</option>
                 <option value="Fire" {% if applied[x].Attribute == "Fire" %} selected {% endif %}>Fire</option>-->
             </select>
-            <select id={{"option3"~(x+1)}} name="option3_select" {% if applied[x].Filter == "User location" %} style="display:inline;" {% else %} style="display:none;" {% endif %}>
+            <select id={{"option3"~(x+1)}} name="option3_select" {% if applied[x].Filter == "User location" %} 
+                    style="display:inline;" {% else %} style="display:none;" {% endif %}>
                 {% for location in locations[x] %}
                     <option value='{{location}}' {% if applied[x].Attribute == location %} selected {% endif %}>{{location}}</option>
                 {% endfor %}
             </select>
-            <input id={{"latitude"~(x+1)}} name="latitude_text" type="text" {% if applied[x].Filter == "Geographic" %} style="display:inline;" value={{applied[x].Attribute[0]}} {% else %} style="display:none;" value="-Latitude-" {% endif %}>
-            <input id={{"longitude"~(x+1)}} name="longitude_text" type="text" {% if applied[x].Filter == "Geographic" %} style="display:inline;" value={{applied[x].Attribute[1]}} {% else %} style="display:none;" value="-Longitude-" {% endif %}>
-            <label id={{"label"~(x+1)}} for={{"confidence"~(x+1)}} {% if applied[x].Filter != '' and applied[x].Filter != '--' and applied[x].Filter != "User location" %} style= "margin-left: 20px; font-family: Arial, Helvetica, sans-serif; display: inline;" {% else %} style= "margin-left: 20px; font-family: Arial, Helvetica, sans-serif; display: none;" {% endif %}>Confidence threshold:</label>
-            <input id={{"confidence"~(x+1)}} name="confidence" value= {{applied[x].Confidence}} type="number" min="0" max="1" step="0.01" {% if applied[x].Filter != '' and applied[x].Filter != '--' and applied[x].Filter != "User location"%} style="width: 50px; display: inline;" {% else %} style="width: 50px; display: none;" {% endif %}>
+            
+            <label id={{"label"~(x+1)}} for={{"confidence"~(x+1)}} {% if applied[x].Filter != '' and applied[x].Filter != "User location" %} 
+                style= "margin-left: 20px; font-family: Arial, Helvetica, sans-serif; display: inline;" 
+                {% else %} style= "margin-left: 20px; font-family: Arial, Helvetica, sans-serif; display: none;" {% endif %}>Confidence threshold:</label>
+            <input id={{"confidence"~(x+1)}} name="confidence" value= {{applied[x].Confidence}} type="number" min="0" max="1" step="0.01" 
+                {% if applied[x].Filter != '' and applied[x].Filter != "User location"%} style="width: 50px; display: inline;" 
+                {% else %} style="width: 50px; display: none;" {% endif %}>
             <button id={{"apply_button"~(x+1)}} type="submit" class="apply_button" name="apply_button" value={{x+1}}>Apply</button>
-            <button id={{"loading"~(x+1)}} name="loading" class="loading" type="button" style="display: none;"><i class="fa fa-circle-o-notch fa-spin"></i> Loading</button>
+            <button id={{"loading"~(x+1)}} name="loading" class="loading" type="button" style="display: none;">
+                    <i class="fa fa-circle-o-notch fa-spin"></i> Loading</button>
+           
             <br><br>
         </form>
         {% if applied[x].Filter != "" %}
-        {% for s in source_applied %}
-        {% if tweets[x+1]|length < number %}
-            {% set number= tweets[x+1]|length %}
-        {% endif %}
-        {% if s.source == 'Twitter' %}
             <div class="container">
-                {% for u in range(number) %}
+                {% for u in range(tweets[x+1]|length) %}
                     <img src= {{ tweets[x+1][u].url }} height=100 title= '{{tweets[x+1][u].text}}' style="display: inline-block;" loading="lazy"/>
                 {% endfor %}
             </div><br>
-        {% endif %}
-        {% endfor %} 
         {% endif %}
         <div class= "download">
             <form method= "POST">
@@ -144,11 +133,8 @@
             let option1_select = document.getElementById('option1'+a);
             let option2_select = document.getElementById('option2'+a);
             let option3_select = document.getElementById('option3'+a);
-            let latitude_text = document.getElementById('latitude'+a);
-            let longitude_text = document.getElementById('longitude'+a);
             let confidence_numb = document.getElementById('confidence'+a);
             let confidence_label = document.getElementById('label'+a);
-        
             Filter_select.onchange = function() {
                 Filter = Filter_select.value;                
                 if(Filter != '' && Filter != 'User location') {
@@ -177,14 +163,6 @@
                 else {
                     option3_select.style.display='none';
                 }
-                if(Filter == 'Geographic') {
-                    latitude_text.style.display='inline';
-                    longitude_text.style.display='inline';
-                }
-                else {
-                    latitude_text.style.display='none';
-                    longitude_text.style.display='none';
-                }
             }
         }
     </script>
@@ -207,14 +185,12 @@
             if ('{{alert}}' != '') {
                 alert('{{alert}}');
             }                        
-        }
-        
+        }  
     </script>
     <script>
         for (i=0;i < {{count}};i++) {
             var a = i+1
             let apply_button = document.getElementById('apply_button'+a);
-            let up_button = document.getElementById('up_button'+a);
             let loading_symbol = document.getElementById('loading'+a);
             let Filter_select = document.getElementById('Filter'+a);
             
